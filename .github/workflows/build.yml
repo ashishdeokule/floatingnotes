@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,11 +24,13 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Accept Android licenses
         run: yes | sdkmanager --licenses || true
 
-      - name: Install build tools
+      - name: Install Android platform and build tools
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Grant gradlew permission
@@ -34,7 +39,7 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: FloatNotes-debug-apk
